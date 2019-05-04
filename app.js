@@ -9,6 +9,10 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+function extend(obj, src) {
+    Object.keys(src).forEach(function(key) { obj[key] = src[key]; });
+    return obj;
+}
 
 app.get('/', (req, res) => {
   res.send('{"forbidden": "Nothing here"}', 403)
@@ -77,6 +81,9 @@ app.post('/server/edit/:id', (req, res) => {
     return res.send("Server not found", 403)
   } else {
     let new_server_info = JSON.stringify(req.body)
+    fs.readFileSync(`./database/servers/${req.params.id}.json`, (err, ctn) => {
+      old_server_info =
+    })
   }
 }
 
