@@ -61,7 +61,8 @@ app.post('/server/add/:id', (req, res) => {
   if(fs.existsSync(`./database/servers/${req.params.id}.json`)) {
     return res.send("Server already exists", 500)
   } else {
-    fs.writeFile(`./database/servers/${req.params.id}.json`, req.body, (err) => {
+    let server_info = JSON.stringify(req.body)
+    fs.writeFile(`./database/servers/${req.params.id}.json`, server_info, (err) => {
       if (err) {
         return res.send("Error creating new server", 501)
       } else {
@@ -70,6 +71,14 @@ app.post('/server/add/:id', (req, res) => {
     })
   }
 })
+
+app.post('/server/edit/:id', (req, res) => {
+  if(!fs.existsSync(`./database/servers/${req.params.id}.json`)) {
+    return res.send("Server not found", 403)
+  } else {
+    let new_server_info = JSON.stringify(req.body)
+  }
+}
 
 app.listen(9090, () => {
   if(fs.existsSync('./database/users/')) {
