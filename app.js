@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 
 app.get('/user/:id', (req, res) => {
   if(!fs.existsSync(`./database/users/${req.params.id}.json`)) {
-    return res.send("User not found", 403)
+    return res.send("User not found", 404)
   } else {
     fs.readFile(`./database/users/${req.params.id}.json`, (err, ctn) => {
       let info = JSON.parse(ctn)
@@ -31,7 +31,7 @@ app.get('/user/:id', (req, res) => {
 
 app.get('/user/update/:id', (req, res) => {
   if(!fs.existsSync(`./database/users/${req.params.id}.json`)) {
-    return res.send("User not found", 403)
+    return res.send("User not found", 404)
   } else {
     return res.send("Not in use atm", 500)
   }
@@ -65,7 +65,7 @@ app.post('/server/add/:id', (req, res) => {
   if(fs.existsSync(`./database/servers/${req.params.id}.json`)) {
     return res.send("Server already exists", 500)
   } else {
-    let server_info = JSON.stringify(req.body)
+    let server_info = JSON.stringify(req.body, null, 2)
     fs.writeFile(`./database/servers/${req.params.id}.json`, server_info, (err) => {
       if (err) {
         return res.send("Error creating new server", 501)
@@ -78,14 +78,22 @@ app.post('/server/add/:id', (req, res) => {
 
 app.post('/server/edit/:id', (req, res) => {
   if(!fs.existsSync(`./database/servers/${req.params.id}.json`)) {
-    return res.send("Server not found", 403)
+    return res.send("Server not found", 404)
   } else {
-    let new_server_info = JSON.stringify(req.body)
-    fs.readFileSync(`./database/servers/${req.params.id}.json`, (err, ctn) => {
-      old_server_info =
+    fs.readFile(`./database/servers/${req.params.id}.json`, 'UTF-8', (err, ctn) => {
+      let old_server_info = JSON.parse(ctn)
+      let updated_server_info_obj = extend(old_server_info, req.body)
+      let updated_server_info = JSON.stringify(updated_server_info_obj, null, 2)
+      fs.writeFile(`./database/servers/${req.params.id}.json`, updated_server_info, (err) => {
+        if (err) {
+          return res.send("Error updating server", 501)
+        } else {
+          return res.send("Server updated successfully", 200)
+        }
+      })
     })
   }
-}
+})
 
 app.listen(9090, () => {
   if(fs.existsSync('./database/users/')) {
