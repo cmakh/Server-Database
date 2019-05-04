@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
   res.send('{"forbidden": "Nothing here"}', 403)
 })
 
-app.get('/user/:id', (req, res) => {
+/*app.get('/user/:id', (req, res) => {
   if(!fs.existsSync(`./database/users/${req.params.id}.json`)) {
     return res.send("User not found", 404)
   } else {
@@ -49,14 +49,15 @@ app.post('/user/add/:id', (req, res) => {
       }
     })
   }
-})
+})*/
 
 app.get('/server/:id', (req, res) => {
   if(!fs.existsSync(`./database/servers/${req.params.id}.json`)) {
     return res.send("Server not found", 403)
   } else {
-    fs.readFileSync(`./database/servers/${req.params.id}.json`, (err, ctn) => {
-      res.send(JSON.parse(ctn), 200)
+    fs.readFile(`./database/servers/${req.params.id}.json`, 'UTF-8', (err, ctn) => {
+      let server_info = JSON.parse(ctn)
+      return res.send(server_info, 200)
     })
   }
 })
