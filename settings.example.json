@@ -1,0 +1,4 @@
+{
+  "_comment": "The token you'll use to access the database",
+  "auth-token": "top secret token"
+}
