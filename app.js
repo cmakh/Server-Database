@@ -1,6 +1,14 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+var bodyParser = require('body-parser')
+
+var bodyParser = require('body-parser')
+app.use( bodyParser.json() );
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
 
 app.get('/', (req, res) => {
   res.send('{"forbidden": "Nothing here"}', 403)
@@ -10,7 +18,10 @@ app.get('/user/:id', (req, res) => {
   if(!fs.existsSync(`./database/users/${req.params.id}.json`)) {
     return res.send("User not found", 403)
   } else {
-    return res.send("Not in use atm", 500)
+    fs.readFile(`./database/users/${req.params.id}.json`, (err, ctn) => {
+      let info = JSON.parse(ctn)
+      res.send(info, 200)
+    })
   }
 })
 
@@ -22,7 +33,7 @@ app.get('/user/update/:id', (req, res) => {
   }
 })
 
-app.get('/user/add/:id', (req, res) => {
+app.post('/user/add/:id', (req, res) => {
   if(fs.existsSync(`./database/users/${req.params.id}.json`)) {
     return res.send("User already exists", 500)
   } else {
@@ -40,15 +51,17 @@ app.get('/server/:id', (req, res) => {
   if(!fs.existsSync(`./database/servers/${req.params.id}.json`)) {
     return res.send("Server not found", 403)
   } else {
-    return res.send("Not in use atm", 500)
+    fs.readFileSync(`./database/servers/${req.params.id}.json`, (err, ctn) => {
+      res.send(JSON.parse(ctn), 200)
+    })
   }
 })
 
-app.get('/server/add/:id', (req, res) => {
+app.post('/server/add/:id', (req, res) => {
   if(fs.existsSync(`./database/servers/${req.params.id}.json`)) {
     return res.send("Server already exists", 500)
   } else {
-    fs.writeFile(`./database/servers/${req.params.id}.json`, '{}', (err) => {
+    fs.writeFile(`./database/servers/${req.params.id}.json`, req.body, (err) => {
       if (err) {
         return res.send("Error creating new server", 501)
       } else {
