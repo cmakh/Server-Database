@@ -55,8 +55,8 @@ app.get('/server/:id', (req, res) => {
   if(!fs.existsSync(`./database/servers/${req.params.id}.json`)) {
     return res.send("Server not found", 403)
   } else {
-    fs.readFile(`./database/servers/${req.params.id}.json`, 'UTF-8', (err, ctn) => {
-      let server_info = JSON.parse(ctn)
+    fs.readFile(`./database/servers/${req.params.id}.json`, 'UTF-8', (err, data) => {
+      let server_info = JSON.parse(data)
       return res.send(server_info, 200)
     })
   }
@@ -81,8 +81,8 @@ app.post('/server/edit/:id', (req, res) => {
   if(!fs.existsSync(`./database/servers/${req.params.id}.json`)) {
     return res.send("Server not found", 404)
   } else {
-    fs.readFile(`./database/servers/${req.params.id}.json`, 'UTF-8', (err, ctn) => {
-      let old_server_info = JSON.parse(ctn)
+    fs.readFile(`./database/servers/${req.params.id}.json`, 'UTF-8', (err, data) => {
+      let old_server_info = JSON.parse(data)
       let updated_server_info_obj = extend(old_server_info, req.body)
       let updated_server_info = JSON.stringify(updated_server_info_obj, null, 2)
       fs.writeFile(`./database/servers/${req.params.id}.json`, updated_server_info, (err) => {
